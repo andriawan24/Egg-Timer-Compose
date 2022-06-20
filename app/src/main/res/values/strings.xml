@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Egg Timer by Naufal</string>
+    <string name="header_question">Which level of egg maturity do you want?</string>
+    <string name="egg_chooser_required">Please choose the egg level first</string>
+    <string name="button_start_title">Start</string>
+    <string name="button_pause_title">Pause</string>
+    <string name="button_resume_title">Resume</string>
+    <string name="button_stop_title">Stop</string>
+    <string name="button_play_title">Play</string>
+</resources>
