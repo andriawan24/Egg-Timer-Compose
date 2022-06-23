@@ -25,6 +25,8 @@ import androidx.navigation.NavHostController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.andriawan.boilanegg.R
+import com.andriawan.boilanegg.ui.components.PlaybackButton
+import com.andriawan.boilanegg.ui.components.TimerWithProgress
 import com.andriawan.boilanegg.ui.theme.BoilAnEggTheme
 import com.andriawan.boilanegg.utils.NotificationUtil
 import kotlinx.coroutines.CoroutineScope
@@ -125,85 +127,9 @@ fun TimerPage(
     }
 }
 
-@Composable
-fun TimerWithProgress(
-    showTimer: String,
-    progress: Float = 0F
-) {
-    Column {
-        Text(
-            text = showTimer,
-            style = MaterialTheme.typography.h3,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.size(24.dp))
-
-        LinearProgressIndicator(
-            progress = progress,
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
-}
-
-@Composable
-fun PlaybackButton(
-    isStarted: Boolean,
-    isFinished: Boolean,
-    isPlaying: Boolean,
-    onPauseTimer: () -> Unit,
-    onStartTimer: () -> Unit,
-    onStopTimer: () -> Unit
-) {
-    Row {
-        if (isStarted && !isFinished) {
-            Button(
-                modifier = Modifier.weight(1F),
-                onClick = {
-                    if (isPlaying) {
-                        onPauseTimer.invoke()
-                    } else {
-                        onStartTimer.invoke()
-                    }
-                },
-            ) {
-                Text(
-                    text = if (isPlaying) {
-                        stringResource(id = R.string.button_pause_title)
-                    } else {
-                        stringResource(id = R.string.button_resume_title)
-                    },
-                    style = MaterialTheme.typography.button
-                )
-            }
-
-            Spacer(modifier = Modifier.size(20.dp))
-        }
-
-        Button(
-            modifier = Modifier.weight(1F),
-            onClick = {
-                if (isStarted)
-                    onStopTimer.invoke()
-                else
-                    onStartTimer.invoke()
-            }
-        ) {
-            Text(
-                text = if (!isStarted) {
-                    stringResource(id = R.string.button_play_title)
-                } else {
-                    stringResource(id = R.string.button_stop_title)
-                }
-            )
-        }
-    }
-}
-
 @Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
-fun TimerPagePreview() {
+fun TimerPageDarkModePreview() {
     BoilAnEggTheme {
         Surface(
             modifier = Modifier
@@ -222,20 +148,18 @@ fun TimerPagePreview() {
 
 @Preview
 @Composable
-fun PlaybackButtonPreview() {
+fun TimerPagePreview() {
     BoilAnEggTheme {
         Surface(
             modifier = Modifier
+                .fillMaxSize()
                 .background(MaterialTheme.colors.background)
-                .padding(24.dp)
         ) {
-            PlaybackButton(
-                isStarted = true,
-                isFinished = false,
-                isPlaying = true,
-                onPauseTimer = { },
-                onStartTimer = { },
-                onStopTimer = { }
+            TimerPage(
+                navController = rememberNavController(),
+                scope = rememberCoroutineScope(),
+                snackBarState = SnackbarHostState(),
+                eggLevelID = 2
             )
         }
     }

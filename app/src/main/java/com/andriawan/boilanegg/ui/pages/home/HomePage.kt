@@ -7,12 +7,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -20,9 +17,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.andriawan.boilanegg.R
 import com.andriawan.boilanegg.navigation.Routes
+import com.andriawan.boilanegg.ui.components.EggChooser
 import com.andriawan.boilanegg.ui.theme.BoilAnEggTheme
-import com.andriawan.boilanegg.ui.theme.Divider
-import com.andriawan.boilanegg.utils.NotificationUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -47,16 +43,7 @@ fun HomePage(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 32.dp)
-        ) {
-            Text(
-                text = stringResource(id = R.string.header_question),
-                style = MaterialTheme.typography.h1
-            )
-        }
+        Header()
 
         eggLevels?.let { list ->
             Row(
@@ -77,71 +64,60 @@ fun HomePage(
             }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 24.dp),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Button(
-                modifier = Modifier
-                    .size(width = 200.dp, height = 40.dp)
-                    .clip(MaterialTheme.shapes.large),
-                onClick = {
-                    if (selectedEgg != -1) {
-                        navController.navigate("${Routes.Timer.routeName}/$selectedEgg")
-                    } else {
-                        scope.launch {
-                            snackBarState.currentSnackbarData?.dismiss()
-                            snackBarState.showSnackbar(
-                                message = context.getString(R.string.egg_chooser_required),
-                                duration = SnackbarDuration.Short
-                            )
-                        }
+        ButtonBottomLayout(
+            selectedEgg = selectedEgg,
+            onEggSelected = { isSuccess ->
+                if (isSuccess) {
+                    navController.navigate("${Routes.Timer.routeName}/$selectedEgg")
+                } else {
+                    scope.launch {
+                        snackBarState.currentSnackbarData?.dismiss()
+                        snackBarState.showSnackbar(
+                            message = context.getString(R.string.egg_chooser_required),
+                            duration = SnackbarDuration.Short
+                        )
                     }
                 }
-            ) {
-                Text(text = stringResource(id = R.string.button_start_title))
             }
-        }
+        )
     }
 }
 
 @Composable
-fun EggChooser(
-    imagePainter: Painter,
-    title: String,
-    onClick: () -> Unit,
-    isSelected: Boolean,
-    modifier: Modifier = Modifier
-) {
+fun Header() {
     Column(
-        modifier = modifier
-            .clip(MaterialTheme.shapes.small)
-            .border(
-                BorderStroke(
-                    width = 1.dp,
-                    color = if (isSelected) Divider else Color.Transparent
-                )
-            )
-            .clickable {
-                onClick.invoke()
-            }
-            .padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 32.dp)
     ) {
-        Image(
-            painter = imagePainter,
-            contentDescription = "Soft Egg",
-            modifier = Modifier.size(150.dp)
-        )
-
         Text(
-            text = title,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.h3
+            text = stringResource(id = R.string.header_question),
+            style = MaterialTheme.typography.h1
         )
+    }
+}
+
+@Composable
+fun ButtonBottomLayout(
+    selectedEgg: Int,
+    onEggSelected: (isSuccess: Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 24.dp),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Button(
+            modifier = Modifier
+                .size(width = 200.dp, height = 40.dp)
+                .clip(MaterialTheme.shapes.large),
+            onClick = { onEggSelected(selectedEgg != -1) }
+        ) {
+            Text(
+                text = stringResource(id = R.string.button_start_title)
+            )
+        }
     }
 }
 

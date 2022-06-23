@@ -1,4 +1,4 @@
-package com.andriawan.boilanegg.data
+package com.andriawan.boilanegg.models
 
 import androidx.annotation.DrawableRes
 import com.andriawan.boilanegg.R

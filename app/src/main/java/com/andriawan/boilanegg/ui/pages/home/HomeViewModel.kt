@@ -4,9 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.andriawan.boilanegg.R
-import com.andriawan.boilanegg.data.EggLevel
-import com.andriawan.boilanegg.data.getEggLevelDummyData
+import com.andriawan.boilanegg.models.getEggLevelDummyData
 
 class HomeViewModel : ViewModel() {
 

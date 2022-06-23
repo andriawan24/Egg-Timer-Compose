@@ -1,6 +1,6 @@
 package com.andriawan.boilanegg.ui.pages.timer
 
-import com.andriawan.boilanegg.data.EggLevel
+import com.andriawan.boilanegg.models.EggLevel
 
 data class TimerState(
     val eggLevel: EggLevel? = null,
