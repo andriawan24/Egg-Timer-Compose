@@ -12,7 +12,7 @@ class NotificationUtil(
 ) {
 
     fun showNotification(title: String, body: String) {
-        val channelID = "channel-0"
+        val channelID = DEFAULT_CHANNEL_ID
         val builder = NotificationCompat.Builder(context, channelID)
             .setSmallIcon(R.drawable.ic_logo)
             .setContentTitle(title)
@@ -32,18 +32,20 @@ class NotificationUtil(
             notificationManager.createNotificationChannel(channel)
         }
 
-        notificationManager.notify(0, builder.build())
+        notificationManager.notify(DEFAULT_NOTIFICATION_ID, builder.build())
     }
 
     fun showNotificationWithProgress(progress: Int, showTime: String) {
-        val channelID = "channel-0"
+        val channelID = DEFAULT_CHANNEL_ID
         val builder = NotificationCompat.Builder(context, channelID)
             .setSmallIcon(R.drawable.ic_logo)
             .setContentTitle("Timer is running")
             .setContentText(showTime)
-            .setProgress(100, progress, false)
+            .setProgress(MAX_PROGRESS, progress, false)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setShowWhen(progress == 100)
 
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -59,6 +61,12 @@ class NotificationUtil(
             notificationManager.createNotificationChannel(channel)
         }
 
-        notificationManager.notify(0, builder.build())
+        notificationManager.notify(DEFAULT_NOTIFICATION_ID, builder.build())
+    }
+
+    companion object {
+        private const val MAX_PROGRESS = 100
+        private const val DEFAULT_NOTIFICATION_ID = 0
+        private const val DEFAULT_CHANNEL_ID = "channel-0"
     }
 }
