@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.andriawan.boilanegg.models.getEggLevelDummyData
 import com.andriawan.boilanegg.utils.NotificationUtil
+import com.andriawan.boilanegg.utils.StatePlayerReceiver
 import timber.log.Timber
 
 class TimerViewModel : ViewModel() {
@@ -51,9 +52,14 @@ class TimerViewModel : ViewModel() {
                 state = state.copy(
                     isPlaying = false
                 )
-                notificationUtil?.showNotification(
-                    title = "Paused",
-                    body = "Timer already paused"
+                val totalMinuteTime =
+                    state.eggLevel?.duration?.times(MINUTE_IN_SECONDS) ?: DEFAULT_DURATION
+                var percentage = (state.secondsRemaining.toFloat()) / totalMinuteTime.toFloat()
+                percentage *= ONE_HUNDRED
+                notificationUtil?.showNotificationWithProgress(
+                    progress = percentage.toInt(),
+                    showTime = formatTimer(state.secondsRemaining),
+                    type = StatePlayerReceiver.STATUS_PAUSE
                 )
             }
 
@@ -95,7 +101,8 @@ class TimerViewModel : ViewModel() {
                 percentage *= ONE_HUNDRED
                 notificationUtil?.showNotificationWithProgress(
                     progress = percentage.toInt(),
-                    showTime = formatTimer((secondsRemaining / SECOND_IN_MILLIS).toInt())
+                    showTime = formatTimer((secondsRemaining / SECOND_IN_MILLIS).toInt()),
+                    type = StatePlayerReceiver.STATUS_RESUME
                 )
             }
 

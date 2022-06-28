@@ -1,5 +1,8 @@
 package com.andriawan.boilanegg.ui.pages.timer
 
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,6 +31,8 @@ import com.andriawan.boilanegg.ui.components.PlaybackButton
 import com.andriawan.boilanegg.ui.components.TimerWithProgress
 import com.andriawan.boilanegg.ui.theme.BoilAnEggTheme
 import com.andriawan.boilanegg.utils.NotificationUtil
+import com.andriawan.boilanegg.utils.StatePlayerBroadcast
+import com.andriawan.boilanegg.utils.StatePlayerReceiver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -69,9 +74,37 @@ fun TimerPage(
         // Add observer to lifecycle
         lifeCycleOwner.lifecycle.addObserver(observer)
 
+        // Register broadcast receiver
+        val receiver = object : StatePlayerBroadcast() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                super.onReceive(context, intent)
+                Timber.d("Go here ${intent?.getStringExtra(StatePlayerReceiver.EXTRAS_STATUS)}")
+                if (intent?.hasExtra(StatePlayerReceiver.EXTRAS_STATUS) == true) {
+                    when (intent.getStringExtra(StatePlayerReceiver.EXTRAS_STATUS)) {
+                        StatePlayerReceiver.STATUS_PAUSE -> {
+                            viewModel.onEvent(TimerStateUIEvent.PauseTimer)
+                        }
+
+                        StatePlayerReceiver.STATUS_RESUME -> {
+                            viewModel.onEvent(TimerStateUIEvent.StartTimer)
+                        }
+
+                        StatePlayerReceiver.STATUS_STOP -> {
+                            viewModel.onEvent(TimerStateUIEvent.StopTimer)
+                        }
+                    }
+                }
+            }
+        }
+
+        IntentFilter(StatePlayerBroadcast.ACTION_NAME).also {
+            context.registerReceiver(receiver, it)
+        }
+
         // When the effect leaves, remove observer
         onDispose {
             lifeCycleOwner.lifecycle.removeObserver(observer)
+            context.unregisterReceiver(receiver)
         }
     }
 

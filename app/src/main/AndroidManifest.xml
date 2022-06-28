@@ -4,6 +4,7 @@
     package="com.andriawan.boilanegg">
 
     <application
+        android:name=".MainApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -12,7 +13,6 @@
         android:roundIcon="@mipmap/ic_logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BoilAnEgg"
-        android:name=".MainApplication"
         tools:targetApi="31">
 
         <activity
@@ -25,6 +25,21 @@
             </intent-filter>
         </activity>
 
+        <receiver
+            android:name=".utils.StatePlayerReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="ChangeStatus" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".utils.StatePlayerBroadcast"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="ReceiveStatus" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
